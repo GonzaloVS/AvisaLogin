@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página de Login Retro</title>
+    <style>
+        body {
+            background-color: #0d0d0d;
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            color: #00d9ff;
+        }
+
+        .login-container {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 0 10px #00d9ff;
+            text-align: center;
+        }
+
+        .title {
+            margin-bottom: 1rem;
+            font-size: 2rem;
+            color: #00d9ff;
+            animation: neonGlow 1.5s ease-in-out infinite alternate;
+        }
+
+        .login-form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .input-group {
+            margin-bottom: 1rem;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #00d9ff;
+        }
+
+        .input-group input {
+            padding: 0.5rem;
+            border: 2px solid #00d9ff;
+            border-radius: 5px;
+            background: none;
+            color: #00d9ff;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #00ffff;
+        }
+
+        .login-button {
+            padding: 0.5rem;
+            border: 2px solid #00d9ff;
+            border-radius: 5px;
+            background: none;
+            color: #00d9ff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .login-button:hover {
+            background: #00d9ff;
+            color: #0d0d0d;
+        }
+
+        @keyframes neonGlow {
+            0%, 100% {
+                text-shadow: 0 0 5px #00d9ff, 0 0 10px #00d9ff, 0 0 20px #00d9ff, 0 0 40px #00d9ff, 0 0 80px #00d9ff;
+            }
+            50% {
+                text-shadow: 0 0 10px #00d9ff, 0 0 20px #00d9ff, 0 0 40px #00d9ff, 0 0 80px #00d9ff, 0 0 160px #00d9ff;
+            }
+        }
+
+        .avisa-login {
+            display: none;
+            margin-top: 1rem;
+            font-size: 1.5rem;
+            color: #00ff00;
+            animation: showAvisa 1s ease-in-out forwards;
+        }
+
+        @keyframes showAvisa {
+            0% {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="login-container">
+    <h1 class="title">Iniciar Sesión</h1>
+    <form class="login-form">
+        <div class="input-group">
+            <label for="username">Usuario</label>
+            <input type="text" id="username" name="username" required>
+        </div>
+        <div class="input-group">
+            <label for="password">Contraseña</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+        <button type="submit" class="login-button">Entrar</button>
+    </form>
+    <div id="avisaLogin" class="avisa-login">Login exitoso!</div>
+</div>
+<script>
+    document.querySelector('.login-form').addEventListener('submit', async function(event) {
+        event.preventDefault();
+
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+
+        const response = await fetch('http://127.0.0.1:8080/auth/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ username, password })
+        });
+
+        const data = await response.json();
+        const avisaLogin = document.getElementById('avisaLogin');
+
+        if (data.success) {
+            avisaLogin.style.display = 'block';
+            avisaLogin.textContent = `Bienvenido, ${data.user.username}!`;
+            avisaLogin.style.color = '#00ff00';
+        } else {
+            avisaLogin.style.display = 'block';
+            avisaLogin.textContent = 'Credenciales incorrectas. Inténtalo de nuevo.';
+            avisaLogin.style.color = '#ff0000';
+        }
+    });
+</script>
+
+</body>
+</html>
