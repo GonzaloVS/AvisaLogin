@@ -1,6 +1,7 @@
 mod config;
 mod routes;
 mod services;
+mod models;
 
 use actix_web::{web, App, HttpServer};
 use sqlx::PgPool;

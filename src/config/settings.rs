@@ -1,7 +1,6 @@
 use std::collections::HashMap;
-use config::{Config, File};
-use dotenvy::dotenv;
-use std::env;
+use config::{Config as AppConfigLib, File};
+
 
 #[derive(Debug, Clone)]
 pub struct AppConfig {
@@ -11,8 +10,8 @@ pub struct AppConfig {
 
 impl AppConfig {
     pub fn load() -> Self {
-        let settings = Config::builder()
-            .add_source(config::File::with_name("config/settings"))
+        let settings = AppConfigLib::builder()
+            .add_source(File::with_name("config/settings"))
             .build()
             .expect("Error cargando settings.toml");
 
@@ -33,9 +32,4 @@ impl AppConfig {
             google_credentials_path: google_settings["credentials_file"].clone(),
         }
     }
-}
-
-pub fn load_database_url() -> String {
-    dotenv().ok(); // Carga .env automáticamente
-    env::var("DATABASE_URL").expect("DATABASE_URL no está configurado en .env")
 }
