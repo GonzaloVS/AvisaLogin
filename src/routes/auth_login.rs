@@ -16,13 +16,22 @@ pub async fn login(
     login_data: web::Json<LoginRequest>,
     db_pool: web::Data<PgPool>,
 ) -> impl Responder {
+    // let result = sqlx::query_as::<_, UserData>(
+    //     "SELECT * FROM private.account WHERE google_email = $1 AND google_access_token = $2"
+    // )
+    //     .bind(&login_data.username)
+    //     .bind(&login_data.password)
+    //     .fetch_optional(db_pool.get_ref())
+    //     .await;
+
     let result = sqlx::query_as::<_, UserData>(
-        "SELECT * FROM private.account WHERE google_email = $1 AND google_access_token = $2"
+        "SELECT * FROM private.account WHERE google_email = $1 AND password_hash = crypt($2, password_hash)"
     )
         .bind(&login_data.username)
         .bind(&login_data.password)
         .fetch_optional(db_pool.get_ref())
         .await;
+
 
     match result {
         Ok(Some(user)) => {
